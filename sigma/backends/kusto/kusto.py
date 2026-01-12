@@ -140,16 +140,10 @@ class KustoBackend(TextQueryBackend):
     )
     list_separator: ClassVar[str] = ", "  # List element separator
 
-    # Value not bound to a field
-    unbound_value_str_expression: ClassVar[str] = (
-        "{value}"  # Expression for string value not bound to a field as format string with placeholder {value}
-    )
-    unbound_value_num_expression: ClassVar[str] = (
-        "{value}"  # Expression for number value not bound to a field as format string with placeholder {value}
-    )
-    unbound_value_re_expression: ClassVar[str] = (
-        "_=~{value}"  # Expression for regular expression not bound to a field as format string with placeholder {value}
-    )
+    # Value not bound to a field - not really support in KQL / really ineffient with | where * contains -> will raise error in conversion methods
+    unbound_value_str_expression: ClassVar[str] = None  
+    unbound_value_num_expression: ClassVar[str] = None  
+    unbound_value_re_expression: ClassVar[str] = None 
 
     # Query finalization: appending and concatenating deferred query part
     deferred_start: ClassVar[str] = "\n| "  # String used as separator between main query and deferred parts

@@ -610,3 +610,23 @@ def test_kusto_wildcard_regex_with_backslashes(microsoft365defender_backend: Kus
         == ['DeviceProcessEvents\n| where FolderPath matches regex "C:\\\\\\\\Windows.*\\\\\\\\process\\\\.exe"']
     )
 
+
+def test_kusto_unbound_value_error(microsoft365defender_backend: KustoBackend):
+    """Test that unbound string values (no field name) raise NotImplementedError."""
+    with pytest.raises(NotImplementedError, match="String value expressions are not supported by the backend"):
+        microsoft365defender_backend.convert(
+            SigmaCollection.from_yaml(
+                """
+            title: Test Unbound Value
+            status: test
+            logsource:
+                category: process_creation
+                product: windows
+            detection:
+                selection:
+                    - 'some_value'
+                condition: selection
+        """
+            )
+        )
+
