@@ -1268,7 +1268,7 @@ def test_microsoft_xdr_pipe_created_cobaltstrike(xdr_backend):
     expected_result = [
         'DeviceEvents\n'
         '| where ActionType =~ "NamedPipeEvent"\n'
-        '| extend SanitizedPipeName = replace_string(tostring(parse_json(AdditionalFields).PipeName), "\\\\Device\\\\NamedPipe\\\\", "")\n'
+        '| extend SanitizedPipeName = replace_regex(tostring(parse_json(AdditionalFields).PipeName), @"^\\\\Device\\\\(NamedPipe\\\\(LOCAL\\\\|GLOBAL\\\\)?|Mup\\\\[a-zA-Z0-9-_.]*\\\\(pipe|PIPE)\\\\)", "")\n'
         '| where (SanitizedPipeName startswith "DserNamePipe" or '
         'SanitizedPipeName startswith "msrpc_" or SanitizedPipeName startswith "win_svc" or '
         'SanitizedPipeName startswith "ntsvcs")'
@@ -1299,7 +1299,7 @@ def test_microsoft_xdr_pipe_created_multiple_conditions(xdr_backend):
     expected_result = [
         'DeviceEvents\n'
         '| where ActionType =~ "NamedPipeEvent"\n'
-        '| extend SanitizedPipeName = replace_string(tostring(parse_json(AdditionalFields).PipeName), "\\\\Device\\\\NamedPipe\\\\", "")\n'
+        '| extend SanitizedPipeName = replace_regex(tostring(parse_json(AdditionalFields).PipeName), @"^\\\\Device\\\\(NamedPipe\\\\(LOCAL\\\\|GLOBAL\\\\)?|Mup\\\\[a-zA-Z0-9-_.]*\\\\(pipe|PIPE)\\\\)", "")\n'
         '| where ((SanitizedPipeName contains "msagent_" or '
         'SanitizedPipeName contains "DserNamePipe" or SanitizedPipeName contains "postex_") and '
         '(not(SanitizedPipeName endswith "_legitpipe")))'
@@ -1324,7 +1324,7 @@ def test_microsoft_xdr_pipe_created_with_image(xdr_backend):
             condition: selection
     """
     expected_result = [
-        'DeviceEvents\n| where ActionType =~ "NamedPipeEvent"\n| extend SanitizedPipeName = replace_string(tostring(parse_json(AdditionalFields).PipeName), "\\\\Device\\\\NamedPipe\\\\", "")\n'
+        'DeviceEvents\n| where ActionType =~ "NamedPipeEvent"\n| extend SanitizedPipeName = replace_regex(tostring(parse_json(AdditionalFields).PipeName), @"^\\\\Device\\\\(NamedPipe\\\\(LOCAL\\\\|GLOBAL\\\\)?|Mup\\\\[a-zA-Z0-9-_.]*\\\\(pipe|PIPE)\\\\)", "")\n'
         '| where ((InitiatingProcessFolderPath endswith "\\\\powershell.exe" or InitiatingProcessVersionInfoOriginalFileName endswith "powershell.exe") and '
         'SanitizedPipeName contains "PSHost")'
     ]

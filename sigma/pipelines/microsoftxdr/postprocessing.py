@@ -15,7 +15,7 @@ class AddPipeNameExtendPostprocessing(QueryPostprocessingTransformation):
     """
     
     def apply(self, rule: SigmaRule, query: str) -> str:  # type: ignore # noqa: F821
-        extend_clause = '| extend SanitizedPipeName = replace_string(tostring(parse_json(AdditionalFields).PipeName), "\\\\Device\\\\NamedPipe\\\\", "")'
+        extend_clause = '| extend SanitizedPipeName = replace_regex(tostring(parse_json(AdditionalFields).PipeName), @"^\\\\Device\\\\(NamedPipe\\\\(LOCAL\\\\|GLOBAL\\\\)?|Mup\\\\[a-zA-Z0-9-_.]*\\\\(pipe|PIPE)\\\\)", "")'
 
         # Check if this is a pipe_created rule
         if rule.logsource.category == "pipe_created":

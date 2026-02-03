@@ -171,7 +171,7 @@ class PipeNameTransformation(DetectionItemTransformation):
     
     For pipe_created category, PipeName in Sigma rules needs to map to SanitizedPipeName
     which is created via: 
-    | extend SanitizedPipeName = replace_string(tostring(parse_json(AdditionalFields).PipeName), "\\\\Device\\\\NamedPipe\\\\", "")
+    | extend SanitizedPipeName = replace_regex(tostring(parse_json(AdditionalFields).PipeName), @"^\\\\Device\\\\(NamedPipe\\\\(LOCAL\\\\|GLOBAL\\\\)?|Mup\\\\[a-zA-Z0-9-_.]*\\\\(pipe|PIPE)\\\\)", "")
     
     This transformation:
     - Strips leading backslashes from PipeName values (since SanitizedPipeName has the prefix removed)
