@@ -217,7 +217,7 @@ def test_kusto_negation_basic(microsoft365defender_backend: KustoBackend):
             )
         )
         == [
-            'DeviceProcessEvents\n| where ((FolderPath endswith "\\\\process.exe" or ProcessVersionInfoOriginalFileName =~ "process.exe") and '
+            'DeviceProcessEvents\n| where (FolderPath endswith "\\\\process.exe" and '
             'ProcessCommandLine =~ "this") and '
             '(not(ProcessCommandLine =~ "notthis"))'
         ]
@@ -248,7 +248,7 @@ def test_kusto_negation_contains(microsoft365defender_backend: KustoBackend):
             )
         )
         == [
-            'DeviceProcessEvents\n| where ((FolderPath endswith "\\\\process.exe" or ProcessVersionInfoOriginalFileName =~ "process.exe") and '
+            'DeviceProcessEvents\n| where (FolderPath endswith "\\\\process.exe" and '
             'ProcessCommandLine contains "this") and '
             '(not(ProcessCommandLine contains "notthis"))'
         ]
@@ -278,9 +278,8 @@ def test_kusto_grouping(microsoft365defender_backend: KustoBackend):
             )
         )
         == [
-            'DeviceNetworkEvents\n| where ((InitiatingProcessFolderPath endswith "\\\\powershell.exe" or '
-            'InitiatingProcessFolderPath endswith "\\\\pwsh.exe") or (InitiatingProcessVersionInfoOriginalFileName in~ ("powershell.exe", '
-            '"pwsh.exe"))) and (RemoteUrl contains '
+            'DeviceNetworkEvents\n| where (InitiatingProcessFolderPath endswith "\\\\powershell.exe" or '
+            'InitiatingProcessFolderPath endswith "\\\\pwsh.exe") and (RemoteUrl contains '
             '"pastebin.com" or RemoteUrl contains "anothersite.com")'
         ]
     )
@@ -320,7 +319,7 @@ def test_kusto_escape_cmdline_slash(microsoft365defender_backend: KustoBackend):
             )
         )
         == [
-            'DeviceProcessEvents\n| where (FolderPath endswith "\\\\schtasks.exe" or ProcessVersionInfoOriginalFileName endswith "schtasks.exe") and '
+            'DeviceProcessEvents\n| where FolderPath endswith "\\\\schtasks.exe" and '
             '(ProcessCommandLine contains " /delete " and '
             'ProcessCommandLine contains "/tn *" and '
             'ProcessCommandLine contains " /f")'
@@ -370,8 +369,7 @@ def test_kusto_cmdline_filters(microsoft365defender_backend: KustoBackend):
             )
         )
         == [
-            'DeviceProcessEvents\n| where (((FolderPath endswith "\\\\netsh.exe" or '
-            'ProcessVersionInfoOriginalFileName endswith "netsh.exe") or '
+            'DeviceProcessEvents\n| where ((FolderPath endswith "\\\\netsh.exe" or '
             'ProcessVersionInfoOriginalFileName =~ "netsh.exe") and '
             '(ProcessCommandLine contains " firewall " and ProcessCommandLine contains " add ")) and '
             '(not(((ProcessCommandLine contains "advfirewall firewall add rule name=Dropbox dir=in action=allow '
@@ -521,7 +519,7 @@ def test_kusto_wildcard_regex_multi_char(microsoft365defender_backend: KustoBack
         """
             )
         )
-        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.*bar" or ProcessVersionInfoOriginalFileName matches regex "foo.*bar"']
+        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.*bar"']
     )
 
 
@@ -543,7 +541,7 @@ def test_kusto_wildcard_regex_single_char(microsoft365defender_backend: KustoBac
         """
             )
         )
-        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.bar" or ProcessVersionInfoOriginalFileName matches regex "foo.bar"']
+        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.bar"']
     )
 
 
@@ -565,7 +563,7 @@ def test_kusto_wildcard_regex_multiple(microsoft365defender_backend: KustoBacken
         """
             )
         )
-        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.*bar.*baz" or ProcessVersionInfoOriginalFileName matches regex "foo.*bar.*baz"']
+        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.*bar.*baz"']
     )
 
 
@@ -587,7 +585,7 @@ def test_kusto_wildcard_regex_mixed(microsoft365defender_backend: KustoBackend):
         """
             )
         )
-        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.bar.*" or ProcessVersionInfoOriginalFileName matches regex "foo.bar.*"']
+        == ['DeviceProcessEvents\n| where FolderPath matches regex "foo.bar.*"']
     )
 
 
@@ -609,6 +607,5 @@ def test_kusto_wildcard_regex_with_backslashes(microsoft365defender_backend: Kus
         """
             )
         )
-        == ['DeviceProcessEvents\n| where FolderPath matches regex "C:\\\\\\\\Windows.*\\\\\\\\process\\\\.exe" or ProcessVersionInfoOriginalFileName =~ "process.exe"']
+        == ['DeviceProcessEvents\n| where FolderPath matches regex "C:\\\\\\\\Windows.*\\\\\\\\process\\\\.exe"']
     )
-

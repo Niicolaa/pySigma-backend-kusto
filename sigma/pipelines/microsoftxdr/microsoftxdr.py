@@ -337,7 +337,7 @@ def _create_field_error_items():
 
 def microsoft_xdr_pipeline(
     transform_parent_image: Optional[bool] = True,
-    transform_image_to_original_file_name: Optional[bool] = True,
+    transform_image_to_original_file_name: Optional[bool] = False,
     query_table: Optional[str] = None,
 ) -> ProcessingPipeline:
     """Pipeline for transformations for SigmaRules to use in the Kusto Query Language backend.
@@ -350,7 +350,7 @@ def microsoft_xdr_pipeline(
     the parent process name in the ParentImage will be extracted and used. This is because the Microsoft 365 Defender
     table schema does not contain a InitiatingProcessParentFolderPath field like it does for InitiatingProcessFolderPath.
     i.e. ParentImage: C:\\Windows\\System32\\whoami.exe -> InitiatingProcessParentFileName: whoami.exe.
-    Defaults to True
+    Defaults to False
     :type transform_parent_image: Optional[bool]
     :param transform_image_to_original_file_name: If True, the Image field will be mapped to Image OR OriginalFileName.
     This allows matching against the original filename even if the file was renamed.
